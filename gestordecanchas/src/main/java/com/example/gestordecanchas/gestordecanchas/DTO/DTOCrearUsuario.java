@@ -7,5 +7,5 @@ public class DTOCrearUsuario {
     private String correo;
     private String telefono;
     private String contrasena;
-    private String rol;
+    private Integer rolId;
 }

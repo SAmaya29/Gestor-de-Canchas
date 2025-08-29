@@ -47,6 +47,14 @@ public class ReservaService {
         if(dto.getCantidadPersonas() > cancha.getTipoDeCancha().getCapacidad_maxima()){
             throw new IllegalArgumentException("La cantidad de personas en la reservas superan la capacidad de la cancha");
         }
+        
+        Reserva reserva = newReserva(usuario, cancha, estado, dto);
+        
+        return newResponseCrearReserva(reserva);
+        
+    }
+
+    private Reserva newReserva(Usuario usuario, Cancha cancha, Estado estado, DTOCrearReserva dto){
         Reserva reserva = new Reserva();
         reserva.setUsuario(usuario);
         reserva.setCancha(cancha);
@@ -55,7 +63,10 @@ public class ReservaService {
         reserva.setEstado(estado);
         reserva.setCantidad_personas(dto.getCantidadPersonas());
         reservaRepository.save(reserva);
+        return reserva;
+    }
 
+    private DTOResponseCrearReserva newResponseCrearReserva(Reserva reserva){
         DTOResponseCrearReserva response = new DTOResponseCrearReserva();
         response.setInicio(reserva.getInicio());
         response.setFin(reserva.getFin());

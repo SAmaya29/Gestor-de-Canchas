@@ -14,24 +14,17 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "estado")
+@Table(name = "rol")
 @Data
-public class Estado {
+public class Rol {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "estado_id")
+    @Column(name = "rol_id")
     private Integer id;
-    private String descripcion;
+    private String nombre;
 
-    @OneToMany(mappedBy = "estado")
+    @OneToMany(mappedBy = "rol")
     @JsonManagedReference
-    private List<Reserva> reservas;
-
-    public void setDescripcion(String descripcion) {
-        if (descripcion == null || descripcion.trim().isEmpty()) {
-            throw new IllegalArgumentException("La descripción no puede ser vacía o nula");
-        }
-        this.descripcion = descripcion;
-    }
+    private List<Usuario> usuarios;
 }

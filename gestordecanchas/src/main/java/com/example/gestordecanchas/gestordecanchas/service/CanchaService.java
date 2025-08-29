@@ -18,19 +18,22 @@ public class CanchaService {
     TipoCanchaRepository tipoCanchaRepository;
 
     public Cancha crearCancha(DTOCrearCancha dto) {
-
         if (canchaRepository.existsByNombre(dto.getNombre())) {
             throw new IllegalArgumentException("El nombre de esta cancha ya fue registrado");
         }
-
         TipoDeCancha tipo = tipoCanchaRepository.findById(dto.getTipoId())
                 .orElseThrow(() -> new RuntimeException("Tipo no encontrado"));
+        return newCancha(dto, tipo);     
+    }
 
+
+    private Cancha newCancha(DTOCrearCancha dto,  TipoDeCancha tipo){
         Cancha cancha = new Cancha();
         cancha.setNombre(dto.getNombre());
         cancha.setDireccion(dto.getDireccion());
         cancha.setTipoDeCancha(tipo);
-        return canchaRepository.save(cancha);
+        canchaRepository.save(cancha);
+        return cancha;
     }
 
 }

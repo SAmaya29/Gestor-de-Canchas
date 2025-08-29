@@ -12,9 +12,5 @@ public class DTOCrearReserva {
     private LocalDateTime finPedido;
     private Integer estadoId;
     private Integer cantidadPersonas;
-    /*@Data
-    public static class DTOCrearEstado{
-        private String descripcion;
-    } */
 
 }
