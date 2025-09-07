@@ -1,14 +1,9 @@
 package com.example.gestordecanchas.gestordecanchas.model;
-
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -66,7 +61,6 @@ public class Usuario {
         if (contrasena == null || contrasena.length() < 8) {
             throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
         }
-        Pbkdf2PasswordEncoder encoder = Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8();
-        this.contrasena = encoder.encode(contrasena);
+        this.contrasena = contrasena;
     }
 }

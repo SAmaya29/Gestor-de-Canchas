@@ -1,5 +1,7 @@
 package com.example.gestordecanchas.gestordecanchas.service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.gestordecanchas.gestordecanchas.model.Usuario;
 import com.example.gestordecanchas.gestordecanchas.model.Rol;
@@ -10,6 +12,9 @@ import com.example.gestordecanchas.gestordecanchas.DTO.DTOResponseCrearUsuario;
 
 @Service
 public class UsuarioService {
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     UsuarioRepository usuarioRepository;
@@ -35,12 +40,18 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
+    public void encontrarUsuarioPorCorreo(String correo) {
+        if (usuarioRepository.existsByCorreo(correo)) {
+            throw new IllegalArgumentException("El correo ya está registrado");
+        }
+    }
+
     private Usuario newUsuario(DTOCrearUsuario dto, Rol rol){
         Usuario usuario = new Usuario();
         usuario.setNombre(dto.getNombre());
         usuario.setCorreo(dto.getCorreo());
         usuario.setTelefono(dto.getTelefono());
-        usuario.setContrasena(dto.getContrasena());
+        usuario.setContrasena(passwordEncoder.encode(dto.getContrasena()));
         usuario.setRol(rol);
         if (usuarioRepository.existsByCorreo(usuario.getCorreo())) {
             throw new IllegalArgumentException("El correo ya está registrado");

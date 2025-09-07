@@ -1,4 +1,5 @@
 package com.example.gestordecanchas.gestordecanchas.service;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,30 +32,30 @@ public class ReservaService {
     public DTOResponseCrearReserva crearReserva(DTOCrearReserva dto) {
 
         List<Reserva> reservas = reservaRepository.findAll();
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId()).orElse(null);
-        Cancha cancha = canchaRepository.findById(dto.getCanchaId()).orElse(null);
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        Cancha cancha = canchaRepository.findById(dto.getCanchaId())
+                .orElseThrow(() -> new IllegalArgumentException("Cancha no encontrada"));
         Estado estado = estadoRepository.findById(dto.getEstadoId())
-        .orElseThrow(() -> new RuntimeException("Tipo no encontrado"));
-
-        if (usuario == null || cancha == null || estado == null) {
-            throw new IllegalArgumentException("Error en los datos ingresados");
-        }
+                .orElseThrow(() -> new RuntimeException("Tipo no encontrado"));
+        
         for (Reserva reserva : reservas) {
             if (dto.getInicioPedido().isBefore(reserva.getFin()) && dto.getFinPedido().isAfter(reserva.getInicio())) {
                 throw new IllegalArgumentException("La cancha ya se encuentra reservada en este horario");
             }
         }
-        if(dto.getCantidadPersonas() > cancha.getTipoDeCancha().getCapacidad_maxima()){
-            throw new IllegalArgumentException("La cantidad de personas en la reservas superan la capacidad de la cancha");
+        if (dto.getCantidadPersonas() > cancha.getTipoDeCancha().getCapacidad_maxima()) {
+            throw new IllegalArgumentException(
+                    "La cantidad de personas en la reservas superan la capacidad de la cancha");
         }
-        
+
         Reserva reserva = newReserva(usuario, cancha, estado, dto);
-        
+
         return newResponseCrearReserva(reserva);
-        
+
     }
 
-    private Reserva newReserva(Usuario usuario, Cancha cancha, Estado estado, DTOCrearReserva dto){
+    private Reserva newReserva(Usuario usuario, Cancha cancha, Estado estado, DTOCrearReserva dto) {
         Reserva reserva = new Reserva();
         reserva.setUsuario(usuario);
         reserva.setCancha(cancha);
@@ -66,7 +67,7 @@ public class ReservaService {
         return reserva;
     }
 
-    private DTOResponseCrearReserva newResponseCrearReserva(Reserva reserva){
+    private DTOResponseCrearReserva newResponseCrearReserva(Reserva reserva) {
         DTOResponseCrearReserva response = new DTOResponseCrearReserva();
         response.setInicio(reserva.getInicio());
         response.setFin(reserva.getFin());

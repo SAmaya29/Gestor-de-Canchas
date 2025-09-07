@@ -26,6 +26,7 @@ public class Cancha {
     private Integer id;
     private String nombre;
     private String direccion;
+    private Float precio_hora;
 
     @ManyToOne
     @JoinColumn(name = "tipo_id")

@@ -8,4 +8,8 @@ public class DTOCrearUsuario {
     private String telefono;
     private String contrasena;
     private Integer rolId;
+
+    public DTOCrearUsuario() {
+        this.rolId = 2; // Asignar el rol de "usuario" por defecto
+    }
 }

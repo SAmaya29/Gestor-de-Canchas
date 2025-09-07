@@ -12,7 +12,7 @@ import com.example.gestordecanchas.gestordecanchas.service.ReservaService;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
-@RequestMapping("/reserva")
+@RequestMapping("/user/reserva")
 public class ReservaController {
 
     @Autowired

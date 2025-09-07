@@ -1,11 +1,8 @@
-
-function App() {
+import AppRoutes from "./routes/AppRoutes";
+export default function App() {
     return (
         <div className="App">
-            <h1>Gestor de Canchas</h1>
-            <p>Bienvenido a la aplicación de gestión de canchas.</p>
+            <AppRoutes />
         </div>
     );
 }
-
-export default App;
