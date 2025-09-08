@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import Button from './Button';
 
-export default function Form({children}) {
+export default function Form({children, ...props}) {
     return (
-        <form className="formulario">
+        <form {...props}>
             {children}
-            <Button className="btn-submit" type="submit">Enviar</Button>
         </form>
     );
 };

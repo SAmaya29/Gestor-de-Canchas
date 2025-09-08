@@ -10,10 +10,10 @@ import java.util.Date;
 @Component
 public class JwtUtils {
     
-    @Value("${app.jwtSecret:mySecretKeyForJWTSigningThatIsLongEnoughForHS512AlgorithmAndShouldBeAtLeast64Bytes}")
+    @Value("${app.jwtSecret}")
     private String jwtSecret;
     
-    @Value("${app.jwtExpirationMs:86400000}") // 24 horas
+    @Value("${app.jwtExpirationMs}") // 24 horas
     private int jwtExpirationMs;
     
     private Key getSigningKey() {
