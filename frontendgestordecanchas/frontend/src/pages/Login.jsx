@@ -1,11 +1,8 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Login.css";
-import Form from "../components/Form"
-import Button from "../components/Button";
-import { login as loginService } from "../api/userService";
+import { login as loginService } from "../api/authService";
 import { AuthContext } from "../context/AuthContext";
-
 
 export default function Login() {
     const [correo, setCorreo] = useState("");
@@ -41,39 +38,39 @@ export default function Login() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("🔥 Form submitted!"); // Debug
 
         // Limpiar errores previos
         setErrors({});
 
         // Validar campos
         if (!validateFields()) {
+            console.log("❌ Validation failed");
             return;
         }
 
+        console.log("✅ Validation passed, starting login...");
         setIsLoading(true);
 
+        // Usar promesas simples en lugar de async/await
         loginService({ correo, contrasena })
             .then(response => {
+                console.log("✅ Login response:", response);
                 const { token, ...userData } = response.data;
                 login(token, userData);
-                console.log("Login successful");
+                console.log("✅ Login successful, navigating...");
                 navigate("/home");
             })
             .catch(error => {
-                console.error("Login failed:", error);
-
-                // Manejar errores específicos del backend
+                console.error("❌ Login error:", error);
                 if (error.response?.status === 401) {
-                    setErrors({ general: "Credenciales incorrectas. Verifica tu correo y contraseña." });
-                } else if (error.response?.data?.message) {
-                    setErrors({ general: error.response.data.message });
-                } else if (error.response?.status === 404) {
-                    setErrors({ correo: "No existe una cuenta con este correo" });
+                    setErrors({ general: "Credenciales incorrectas" });
                 } else {
-                    setErrors({ general: "Error en el login. Por favor intenta de nuevo." });
+                    setErrors({ general: "Error en el login" });
                 }
             })
             .finally(() => {
+                console.log("🏁 Setting loading to false");
                 setIsLoading(false);
             });
     };
@@ -89,7 +86,7 @@ export default function Login() {
                     <div className="error-message">{errors.general}</div>
                 )}
 
-                <Form className="login-form" onSubmit={handleSubmit}>
+                <form className="login-form" onSubmit={handleSubmit}>
                     <label htmlFor="correo">Correo Electrónico</label>
                     <input
                         id="correo"
@@ -114,11 +111,14 @@ export default function Login() {
                     />
                     {errors.contrasena && <div className="error-message">{errors.contrasena}</div>}
 
-                    <Button type="submit" className="login-btn" disabled={isLoading}>
-                        {isLoading && <span className="loading-spinner"></span>}
+                    <button 
+                        type="submit" 
+                        className="login-btn" 
+                        disabled={isLoading}
+                    >
                         {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-                    </Button>
-                </Form>
+                    </button>
+                </form>
                 <p className="register-link">
                     ¿No tienes cuenta? <a href="/register">Regístrate aquí</a>
                 </p>

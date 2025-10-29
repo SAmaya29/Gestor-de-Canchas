@@ -1,8 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import "../css/Register.css";
 import Button from "../components/Button";
 import Form from "../components/Form";
-import { register as registerService } from "../api/userService";
+import { register as registerService } from "../api/authService";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -15,6 +15,14 @@ const Register = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const navigate = useNavigate();
+    const isMountedRef = useRef(true);
+
+    // Cleanup al desmontar el componente
+    useEffect(() => {
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, []);
 
     // Validación de email
     const validateEmail = (email) => {
@@ -69,8 +77,12 @@ const Register = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Verificar si el componente sigue montado
+        if (!isMountedRef.current) return;
+        
         // Limpiar mensajes previos
         setErrors({});
         setSuccessMessage("");
@@ -79,9 +91,14 @@ const Register = () => {
         if (!validateFields()) {
             return;
         }
+        
         setIsLoading(true);
-        registerService({ nombre, correo, telefono, contrasena })
-            .then(response => {
+        
+        try {
+            const response = await registerService({ nombre, correo, telefono, contrasena });
+            
+            // Solo proceder si el componente sigue montado
+            if (isMountedRef.current) {
                 console.log("Registro exitoso:");
                 setSuccessMessage("¡Registro exitoso! Redirigiendo al login...");
                 // Limpiar formulario
@@ -90,12 +107,16 @@ const Register = () => {
                 setTelefono("");
                 setContrasena("");
                 setConfirmar("");
-                // Redirigir después de 2 segundos
+                // Redirigir después de un momento para mostrar el mensaje
                 setTimeout(() => {
-                    navigate("/login");
-                }, 2000);
-            })
-            .catch(error => {
+                    if (isMountedRef.current) {
+                        navigate("/login", { replace: true });
+                    }
+                }, 1500);
+            }
+        } catch (error) {
+            // Solo actualizar estado si el componente sigue montado
+            if (isMountedRef.current) {
                 console.error("Error en el registro:", error);
                 // Manejar errores específicos del backend
                 if (error.response?.data?.message) {
@@ -105,10 +126,9 @@ const Register = () => {
                 } else {
                     setErrors({ general: "Error en el registro. Por favor intenta de nuevo." });
                 }
-            })
-            .finally(() => {
                 setIsLoading(false);
-            });
+            }
+        }
     };
 
     return (
@@ -187,8 +207,14 @@ const Register = () => {
                     {errors.confirmar && <div className="error-message">{errors.confirmar}</div>}
 
                     <Button type="submit" className="register-btn" disabled={isLoading}>
-                        {isLoading && <span className="loading-spinner"></span>}
-                        {isLoading ? 'Registrando...' : 'Registrar'}
+                        {isLoading ? (
+                            <>
+                                <span className="loading-spinner"></span>
+                                Registrando...
+                            </>
+                        ) : (
+                            'Registrar'
+                        )}
                     </Button>
                 </Form>
                 <p className="register-login-link">

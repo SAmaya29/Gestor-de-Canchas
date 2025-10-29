@@ -11,7 +11,7 @@ import com.example.gestordecanchas.gestordecanchas.model.Cancha;
 import com.example.gestordecanchas.gestordecanchas.service.CanchaService;
 
 @RestController
-@RequestMapping("/admin/cancha")
+@RequestMapping("/cancha")
 public class CanchaController {
 
     @Autowired

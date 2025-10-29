@@ -54,7 +54,7 @@ public class AuthController {
     }
     }
 
-    @GetMapping("/me")
+    @GetMapping("/user")
     public ResponseEntity<Usuario> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -64,6 +64,7 @@ public class AuthController {
         }
         return ResponseEntity.status(401).build();
     }
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {

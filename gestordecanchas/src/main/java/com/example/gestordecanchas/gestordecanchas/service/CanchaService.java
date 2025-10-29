@@ -1,4 +1,6 @@
 package com.example.gestordecanchas.gestordecanchas.service;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.gestordecanchas.gestordecanchas.DTO.DTOCrearCancha;
@@ -23,6 +25,10 @@ public class CanchaService {
         TipoDeCancha tipo = tipoCanchaRepository.findById(dto.getTipoId())
                 .orElseThrow(() -> new RuntimeException("Tipo no encontrado"));
         return newCancha(dto, tipo);     
+    }
+
+    public List<Cancha> listarCanchas(){
+        return canchaRepository.findAll();
     }
 
 

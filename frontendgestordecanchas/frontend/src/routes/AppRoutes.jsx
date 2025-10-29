@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Inicio from "../pages/Inicio";
+import Reservar from "../pages/Reservar"
 
 function AppRoutes() {
     return (
@@ -17,6 +18,14 @@ function AppRoutes() {
                 element={
                     <PrivateRoute>
                         <Home />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/reservar"
+                element={
+                    <PrivateRoute>
+                        <Reservar />
                     </PrivateRoute>
                 }
             />

@@ -9,20 +9,32 @@ export const AuthProvider = ({ children }) => {
 
     // Se ejecuta cuando la app arranca
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            api.get("/auth/me", {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-                .then(res => setUser(res.data))
-                .catch(() => {
-                    localStorage.removeItem("token");
+        const checkAuth = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                console.log("🔑 Checking auth with token:", token ? "EXISTS" : "NO TOKEN");
+                
+                if (token) {
+                    console.log("📡 Calling /auth/user...");
+                    const response = await api.get("/auth/user");
+                    console.log("✅ Auth check successful:", response.data);
+                    setUser(response.data);
+                } else {
+                    console.log("❌ No token found");
                     setUser(null);
-                })
-                .finally(() => setLoading(false));
-        } else {
-            setLoading(false);
-        }
+                }
+            } catch (error) {
+                console.error("❌ Error verificando autenticación:", error);
+                console.log("🧹 Cleaning token and user data");
+                // Si hay error, limpiar token y usuario
+                localStorage.removeItem("token");
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        checkAuth();
     }, []);
 
     const login = (token, userData) => {
@@ -34,6 +46,20 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token");
         setUser(null);
     };
+
+    // Añadir protección contra renderizado si hay errores
+    if (loading) {
+        return (
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh' 
+            }}>
+                Cargando...
+            </div>
+        );
+    }
 
     return (
         <AuthContext.Provider value={{ user, login, logout, loading }}>

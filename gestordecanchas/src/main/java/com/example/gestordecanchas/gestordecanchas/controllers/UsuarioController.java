@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.gestordecanchas.gestordecanchas.service.UsuarioService;
 
 @RestController
-@RequestMapping("/admin/usuario")
+@RequestMapping("/usuario")
 public class UsuarioController {
 
     @Autowired

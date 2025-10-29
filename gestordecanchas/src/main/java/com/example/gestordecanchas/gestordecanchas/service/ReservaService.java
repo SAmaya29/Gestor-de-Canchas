@@ -13,6 +13,7 @@ import com.example.gestordecanchas.gestordecanchas.repository.ReservaRepository;
 import com.example.gestordecanchas.gestordecanchas.repository.UsuarioRepository;
 import com.example.gestordecanchas.gestordecanchas.repository.CanchaRepository;
 import com.example.gestordecanchas.gestordecanchas.repository.EstadoRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReservaService {
@@ -29,18 +30,19 @@ public class ReservaService {
     @Autowired
     EstadoRepository estadoRepository;
 
+    @Transactional
     public DTOResponseCrearReserva crearReserva(DTOCrearReserva dto) {
 
-        List<Reserva> reservas = reservaRepository.findAll();
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
         Cancha cancha = canchaRepository.findById(dto.getCanchaId())
                 .orElseThrow(() -> new IllegalArgumentException("Cancha no encontrada"));
         Estado estado = estadoRepository.findById(dto.getEstadoId())
                 .orElseThrow(() -> new RuntimeException("Tipo no encontrado"));
-        
+        List<Reserva> reservas = cancha.getReservas();
         for (Reserva reserva : reservas) {
-            if (dto.getInicioPedido().isBefore(reserva.getFin()) && dto.getFinPedido().isAfter(reserva.getInicio())) {
+            if (dto.getInicioPedido().isBefore(reserva.getFin()) &&
+                    dto.getFinPedido().isAfter(reserva.getInicio())) {
                 throw new IllegalArgumentException("La cancha ya se encuentra reservada en este horario");
             }
         }
