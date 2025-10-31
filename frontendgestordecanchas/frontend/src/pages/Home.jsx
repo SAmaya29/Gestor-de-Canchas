@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavBar.jsx';
 import ReservaCard from '../components/ReservaCard';
 import { getUserReservas } from '../api/reservaService';
 import { AuthContext } from '../context/AuthContext';
@@ -20,7 +20,7 @@ export default function Home() {
             
             getUserReservas()
                 .then(response => {
-                    console.log('✅ Reservas loaded:', response.data);
+                    console.log('✅ Reservas loaded:');
                     setReservas(Array.isArray(response.data) ? response.data : []);
                 })
                 .catch(error => {
@@ -34,6 +34,12 @@ export default function Home() {
 
         fetchReservas();
     }, [user]);
+
+    // Función para manejar cuando se cancela una reserva
+    const handleReservaCancelada = (reservaId) => {
+        // Eliminar la reserva cancelada de la lista sin hacer una nueva petición
+        setReservas(prev => prev.filter(reserva => reserva.id !== reservaId));
+    };
 
     // Función para reintentar cargar reservas
     const handleRetry = () => {
@@ -59,7 +65,6 @@ export default function Home() {
             <div className="home-content">
                 <div className="home-header">
                     <h1>Mis Reservas</h1>
-                    <p>Bienvenido de vuelta, {user?.nombre}</p>
                 </div>
 
                 {loading && (
@@ -89,7 +94,11 @@ export default function Home() {
                 {!loading && !error && reservas.length > 0 && (
                     <div className="reservas-grid">
                         {reservas.map(reserva => (
-                            <ReservaCard key={reserva.id} reserva={reserva} />
+                            <ReservaCard 
+                                key={reserva.id} 
+                                reserva={reserva} 
+                                onReservaCancelada={handleReservaCancelada}
+                            />
                         ))}
                     </div>
                 )}

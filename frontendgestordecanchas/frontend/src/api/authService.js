@@ -5,6 +5,6 @@ export const login = async ({ correo, contrasena }) => {
     return api.post("/auth/login", { correo, contrasena });
 };
 
-export const register = async ({ nombre, correo, telefono, contrasena }) => {
-    return api.post("/auth/registro", { nombre, correo, telefono, contrasena });
+export const register = async ({ nombre, correo, telefono, contrasena, rolNombre, rolPassword }) => {
+    return api.post("/auth/registro", { nombre, correo, telefono, contrasena, rolNombre, rolPassword });
 };

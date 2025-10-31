@@ -48,7 +48,8 @@
     font-weight: 500;
 }
 
-.register-form input {
+.register-form input,
+.register-form select {
     padding: 10px 12px;
     border: 1px solid #e3e6ee;
     border-radius: 8px;
@@ -59,12 +60,14 @@
     transition: border 0.2s;
 }
 
-.register-form input:focus {
+.register-form input:focus,
+.register-form select:focus {
     border-color: #5b7fff;
     background: #fff;
 }
 
-.register-form input.error {
+.register-form input.error,
+.register-form select.error {
     border-color: #f44336;
     background: #fef7f7;
 }
@@ -82,7 +85,7 @@
     transition: background 0.2s;
 }
 
-.register-btn:hover {
+.register-btn:hover:not(:disabled) {
     background: #1565c0;
 }
 
@@ -131,29 +134,70 @@
 }
 
 .success-message {
-    background: #e8f5e8;
+    background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
     color: #2e7d32;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-left: 4px solid #4caf50;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1);
+    animation: slideIn 0.3s ease-out;
 }
 
-.loading-spinner {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #1976d2;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-right: 8px;
+/* Campo condicional de contraseña de admin */
+.admin-password-field {
+    margin-top: 12px;
+    padding: 16px;
+    background: linear-gradient(135deg, #fff3e0, #ffeaa7);
+    border-radius: 12px;
+    border-left: 4px solid #ff9800;
+    animation: slideIn 0.3s ease-out;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.admin-password-field label {
+    color: #e65100;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-password-field label::before {
+    content: "🔒";
+    font-size: 1.1rem;
+}
+
+.admin-password-field input {
+    background: #fff;
+    border: 2px solid #ffb74d;
+    margin-bottom: 0;
+}
+
+.admin-password-field input:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+}
+
+.admin-password-field .error-message {
+    color: #d84315;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+/* Animación para elementos que aparecen */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Responsive */

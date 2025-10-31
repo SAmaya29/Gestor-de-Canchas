@@ -1,5 +1,7 @@
 package com.example.gestordecanchas.gestordecanchas.service;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.gestordecanchas.gestordecanchas.model.Usuario;
@@ -21,15 +23,17 @@ public class UsuarioService {
     @Autowired
     RolRepository rolRepository;
 
+    @Value("${rol.admin.password}")
+    private String adminPassword;
+
     public DTOResponseCrearUsuario crearUsuario(DTOCrearUsuario dto) {
-        Rol rol = rolRepository.findById(dto.getRolId())
-        .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-        Usuario usuario = newUsuario(dto, rol);
+        Usuario usuario = newUsuario(dto);
         return crearResponseCrearUsuario(usuario);
     }
 
     public Usuario obtenerUsuarioPorId(Integer id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("El usuario no fue encontrado o no existe"));
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario no fue encontrado o no existe"));
     }
 
     public void eliminarUsuario(Integer id) {
@@ -45,8 +49,15 @@ public class UsuarioService {
         }
     }
 
-    private Usuario newUsuario(DTOCrearUsuario dto, Rol rol){
+    private Usuario newUsuario(DTOCrearUsuario dto) {
         Usuario usuario = new Usuario();
+        Rol rol = rolRepository.findByNombre(dto.getRolNombre())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+        if(dto.getRolNombre().equals("ADMIN")) {
+            if(!dto.getRolPassword().equals(adminPassword)) {
+                throw new IllegalArgumentException("Contraseña de administrador incorrecta");
+            }
+        }
         usuario.setNombre(dto.getNombre());
         usuario.setCorreo(dto.getCorreo());
         usuario.setTelefono(dto.getTelefono());
@@ -59,7 +70,7 @@ public class UsuarioService {
         return usuario;
     }
 
-    private DTOResponseCrearUsuario crearResponseCrearUsuario(Usuario usuario){
+    private DTOResponseCrearUsuario crearResponseCrearUsuario(Usuario usuario) {
         DTOResponseCrearUsuario response = new DTOResponseCrearUsuario();
         response.setNombre(usuario.getNombre());
         response.setCorreo(usuario.getCorreo());

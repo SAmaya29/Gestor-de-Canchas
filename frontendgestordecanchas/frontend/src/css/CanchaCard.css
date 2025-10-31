@@ -1,0 +1,137 @@
+/* CanchaCard.css */
+.cancha-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    overflow: hidden;
+}
+
+.cancha-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.cancha-card.selected {
+    border-color: #007bff;
+    box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+}
+
+.cancha-card-header {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cancha-nombre {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.cancha-tipo {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.cancha-card-body {
+    padding: 20px;
+}
+
+.cancha-info {
+    margin-bottom: 16px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.info-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.info-value.precio {
+    color: #28a745;
+    font-size: 1.1rem;
+}
+
+.cancha-descripcion {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin: 16px 0 0 0;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.cancha-card-footer {
+    padding: 0 20px 20px;
+}
+
+.select-btn {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.select-btn:hover {
+    background: #0056b3;
+}
+
+.cancha-card.selected .select-btn {
+    background: #28a745;
+}
+
+.cancha-card.selected .select-btn:hover {
+    background: #1e7e34;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cancha-card-header {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    
+    .cancha-nombre {
+        font-size: 1.2rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+    }
+}

@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/registro").permitAll()
+                        .requestMatchers("/rol/roles").permitAll()
                         .requestMatchers("/auth/user").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("reserva/user/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated());

@@ -7,9 +7,10 @@ public class DTOCrearUsuario {
     private String correo;
     private String telefono;
     private String contrasena;
-    private Integer rolId;
+    private String rolNombre;
+    private String rolPassword;
 
     public DTOCrearUsuario() {
-        this.rolId = 2; // Asignar el rol de "usuario" por defecto
+        this.rolPassword = "";
     }
 }

@@ -1,10 +1,12 @@
 package com.example.gestordecanchas.gestordecanchas.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.gestordecanchas.gestordecanchas.DTO.DTOCrearReserva;
 import com.example.gestordecanchas.gestordecanchas.DTO.DTOResponseCrearReserva;
+import com.example.gestordecanchas.gestordecanchas.DTO.DTOReservaResponse;
 import com.example.gestordecanchas.gestordecanchas.model.Cancha;
 import com.example.gestordecanchas.gestordecanchas.model.Estado;
 import com.example.gestordecanchas.gestordecanchas.model.Reserva;
@@ -78,5 +80,51 @@ public class ReservaService {
         response.setCanchaNombre(reserva.getCancha().getNombre());
         response.setCantidadPersonas(reserva.getCantidad_personas());
         return response;
+    }
+
+    public List<DTOReservaResponse> getUserReservas(List<Reserva> reservas) {
+        return reservas.stream()
+                .filter(r -> !r.getEstado().getDescripcion().equals("Cancelada"))
+                .map(this::convertReservaToReservaResponse)
+                .collect(Collectors.toList());
+    }
+
+    private DTOReservaResponse convertReservaToReservaResponse(Reserva reserva) {
+        DTOReservaResponse response = new DTOReservaResponse();
+        response.setId(reserva.getId());
+        response.setInicio(reserva.getInicio());
+        response.setFin(reserva.getFin());
+        response.setCantidadPersonas(reserva.getCantidad_personas());
+        response.setCreatedAt(reserva.getCreated_at());
+        // Información del estado
+        response.setEstado(reserva.getEstado().getDescripcion());
+        // Información de la cancha
+        response.setCanchaNombre(reserva.getCancha().getNombre());
+        response.setCanchaDireccion(reserva.getCancha().getDireccion());
+        response.setTipoDeCancha(reserva.getCancha().getTipoDeCancha().getNombre());
+        response.setPrecioHora(reserva.getCancha().getPrecio_hora());
+        response.setCapacidadMaxima(reserva.getCancha().getTipoDeCancha().getCapacidad_maxima());
+        // Información del usuario
+        response.setUsuarioNombre(reserva.getUsuario().getNombre());
+        return response;
+    }
+
+    @Transactional
+    public void cancelarReserva(Integer reservaId, Integer usuarioId) {
+        Reserva reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        // Verificar que la reserva pertenece al usuario autenticado
+        if (!reserva.getUsuario().getId().equals(usuarioId)) {
+            throw new IllegalArgumentException("No tienes permisos para cancelar esta reserva");
+        }
+        // Verificar que la reserva esté en estado "Pendiente" para poder cancelarla
+        if (!"Pendiente".equalsIgnoreCase(reserva.getEstado().getDescripcion())) {
+            throw new IllegalArgumentException("Solo se pueden cancelar reservas en estado 'Pendiente'");
+        }
+
+        // Modificar el estado de la reserva a "Cancelada"
+        reserva.setEstado(estadoRepository.findByDescripcion("Cancelada")
+                .orElseThrow(() -> new RuntimeException("Estado 'Cancelada' no encontrado")));
+        reservaRepository.save(reserva);
     }
 }

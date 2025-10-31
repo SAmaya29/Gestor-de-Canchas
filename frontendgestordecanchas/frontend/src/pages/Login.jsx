@@ -1,4 +1,6 @@
 import React, { useState, useContext } from "react";
+import Button from '../components/Button'
+import Form from "../components/Form";
 import { useNavigate } from "react-router-dom";
 import "../css/Login.css";
 import { login as loginService } from "../api/authService";
@@ -38,18 +40,17 @@ export default function Login() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("🔥 Form submitted!"); // Debug
-
+        console.log("Form submitted!"); // Debug
         // Limpiar errores previos
         setErrors({});
 
         // Validar campos
         if (!validateFields()) {
-            console.log("❌ Validation failed");
+            console.log("Validation failed");
             return;
         }
 
-        console.log("✅ Validation passed, starting login...");
+        console.log("Validation passed, starting login...");
         setIsLoading(true);
 
         // Usar promesas simples en lugar de async/await
@@ -86,7 +87,7 @@ export default function Login() {
                     <div className="error-message">{errors.general}</div>
                 )}
 
-                <form className="login-form" onSubmit={handleSubmit}>
+                <Form className="login-form" onSubmit={handleSubmit}>
                     <label htmlFor="correo">Correo Electrónico</label>
                     <input
                         id="correo"
@@ -111,14 +112,14 @@ export default function Login() {
                     />
                     {errors.contrasena && <div className="error-message">{errors.contrasena}</div>}
 
-                    <button 
+                    <Button
                         type="submit" 
                         className="login-btn" 
                         disabled={isLoading}
                     >
                         {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-                    </button>
-                </form>
+                    </Button>
+                </Form>
                 <p className="register-link">
                     ¿No tienes cuenta? <a href="/register">Regístrate aquí</a>
                 </p>

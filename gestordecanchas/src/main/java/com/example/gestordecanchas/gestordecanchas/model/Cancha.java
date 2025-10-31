@@ -1,7 +1,7 @@
 package com.example.gestordecanchas.gestordecanchas.model;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -30,7 +30,7 @@ public class Cancha {
 
     @ManyToOne
     @JoinColumn(name = "tipo_id")
-    @JsonBackReference
+    @JsonIgnoreProperties("canchas")
     private TipoDeCancha tipoDeCancha;
 
     @OneToMany(mappedBy = "cancha")

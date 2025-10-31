@@ -3,6 +3,7 @@ import "../css/Register.css";
 import Button from "../components/Button";
 import Form from "../components/Form";
 import { register as registerService } from "../api/authService";
+import { getRoles } from "../api/rolService";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -11,6 +12,9 @@ const Register = () => {
     const [telefono, setTelefono] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [confirmar, setConfirmar] = useState("");
+    const [roles, setRoles] = useState([]);
+    const [rolSeleccionado, setRolSeleccionado] = useState("");
+    const [rolPassword, setRolPassword] = useState("");
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
@@ -19,6 +23,21 @@ const Register = () => {
 
     // Cleanup al desmontar el componente
     useEffect(() => {
+        isMountedRef.current = true;
+        
+        const fetchRoles = async () => {
+            try {
+                const response = await getRoles();
+                if (isMountedRef.current) {
+                    setRoles(response.data || []);
+                }
+            } catch (error) {
+                console.error("Error cargando roles:", error);
+            }
+        };
+
+        fetchRoles();
+
         return () => {
             isMountedRef.current = false;
         };
@@ -73,16 +92,24 @@ const Register = () => {
             newErrors.confirmar = "Las contraseñas no coinciden";
         }
 
+        if (!rolSeleccionado) {
+            newErrors.rol = "El rol es requerido";
+        }
+
+        if (rolSeleccionado === "ADMIN" && !rolPassword) {
+            newErrors.rolPassword = "La contraseña del rol es requerida";
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Verificar si el componente sigue montado
         if (!isMountedRef.current) return;
-        
+
         // Limpiar mensajes previos
         setErrors({});
         setSuccessMessage("");
@@ -91,12 +118,19 @@ const Register = () => {
         if (!validateFields()) {
             return;
         }
-        
+
         setIsLoading(true);
-        
+
         try {
-            const response = await registerService({ nombre, correo, telefono, contrasena });
-            
+            const response = await registerService({ 
+                nombre, 
+                correo, 
+                telefono, 
+                contrasena, 
+                rolNombre: rolSeleccionado, 
+                rolPassword 
+            });
+
             // Solo proceder si el componente sigue montado
             if (isMountedRef.current) {
                 console.log("Registro exitoso:");
@@ -107,6 +141,8 @@ const Register = () => {
                 setTelefono("");
                 setContrasena("");
                 setConfirmar("");
+                setRolSeleccionado("");
+                setRolPassword("");
                 // Redirigir después de un momento para mostrar el mensaje
                 setTimeout(() => {
                     if (isMountedRef.current) {
@@ -206,15 +242,40 @@ const Register = () => {
                     />
                     {errors.confirmar && <div className="error-message">{errors.confirmar}</div>}
 
+                    <label htmlFor="rolNombre">Rol</label>
+                    <select
+                        id="rolNombre"
+                        value={rolSeleccionado}
+                        onChange={(e) => setRolSeleccionado(e.target.value)}
+                        className={errors.rol ? 'error' : ''}
+                        required
+                    >
+                        <option value="">Seleccione un rol...</option>
+                        {roles.map((rol) => (
+                            <option key={rol.nombreRol} value={rol.nombreRol}>
+                                {rol.nombreRol}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.rol && <div className="error-message">{errors.rol}</div>}
+
+                    {rolSeleccionado === "ADMIN" && (
+                        <div className="admin-password-field">
+                            <label htmlFor="rolPassword">Contraseña de Administrador</label>
+                            <input
+                                id="rolPassword"
+                                type="password"
+                                placeholder="Ingresa la contraseña de administrador"
+                                value={rolPassword}
+                                onChange={(e) => setRolPassword(e.target.value)}
+                                className={errors.rolPassword ? 'error' : ''}
+                                required
+                            />
+                            {errors.rolPassword && <div className="error-message">{errors.rolPassword}</div>}
+                        </div>
+                    )}
                     <Button type="submit" className="register-btn" disabled={isLoading}>
-                        {isLoading ? (
-                            <>
-                                <span className="loading-spinner"></span>
-                                Registrando...
-                            </>
-                        ) : (
-                            'Registrar'
-                        )}
+                        {isLoading ? 'Registrando...' : 'Registrar'}
                     </Button>
                 </Form>
                 <p className="register-login-link">
